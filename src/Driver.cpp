@@ -1,16 +1,15 @@
 #include "include/Driver.hpp"
 
-
-int Driver::reducir(int dir, int tipo1, int tipo2){
-
-}
-
 string Driver::nuevaEtiqueta(){
-    return "labelnueva";
+    stringstream label;
+    label<< "L"<<etiqueta++;
+    return label.str();
 }
 
-int nuevaTemporal(){
-    return 0;
+string nuevaTemporal(){
+    stringstream label;
+    label<< "T"<<etiqueta++;
+    return label.str();
 }
 
 void Driver::gen_label(string label){
@@ -25,6 +24,30 @@ void Driver::gen_goto(string label){
     code.push_back(Quadrupla("goto", "", "", label));
 }
 
+void Parser::gen_fin(string label){
+    code.push_back(Quadrupla("fin", "", "", label));
+}
+
+int Driver::reducir(int dir, int t1, int t2){
+    
+    string temp;
+    if(t1==t2) return dir;
+    else if(t1==1 && t2==0){
+        temp = nuevaTemporal();
+        code.push_back(Quadrupla("(int)",dir, "", temp));
+        TS.agregar(Symbol(temp, 0, "temporal"));        
+        return temp;
+    }else return "";
+
+}
+
+int Driver::maximo(int t1, int t2)
+{
+    if(t1==t2) return t1;
+    else if(t1==0 && t2==1) return 1;
+    else if(t1==1 && t2==0) return 1;
+    else return -1;
+}
 
 
 

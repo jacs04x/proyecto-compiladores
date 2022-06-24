@@ -11,7 +11,8 @@ private:
     int tipoBase;
 
 public:
-    Type()=default;
+    Type(string nombre, int tamano, int numElementos, int tipoBase);
+    
     Type(int val, int tipo);
     Type(string nombre, int tamano, int numElementos, int tipoBase);
     string getNombre();

@@ -3,6 +3,7 @@
 #include "Quadrupla.hpp"
 #include "SymTab.hpp"
 #include "TypeTab.hpp"
+#include <sstream>
 
 class Driver{
 
@@ -10,7 +11,7 @@ class Driver{
         SymTab TS;
         TypeTab TT;
         vector<Quadrupla> code;
-        
+        int etiqueta=0;
 
     public:
         Driver()= default;

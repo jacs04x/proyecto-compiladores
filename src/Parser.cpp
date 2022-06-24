@@ -3,6 +3,8 @@
 Parser::Parser(Lexer *lexer, Driver *driver){
     this->lexer= lexer;
     this->driver = driver;
+    this->TT = TypeTab();
+    this->TS = SymTab();
 }
 
 /**
@@ -93,7 +95,8 @@ int Parser::a(int base){
         {
             error("Se esperaba un tipo entero");
         }
-        int Atipo = TT.agregar(stoi(numVal), A1tipo);
+        Type t = Type("array", stoi(numval) * TT.getTam(numtipo), stoi(numval), A1tipo );
+        int Atipo = TT.agregar(t);
         return Atipo;
     }else{
         return base;
@@ -111,7 +114,7 @@ void Parser::l(int tipo)
     string idVal = lexer->YYText();
     if(!TS.existe(idVal))
     {
-        TS.agregar(idVal, dir, tipo, "var");
+        TS.agregar(idVal, this->dir, tipo, "var");
         dir += TT.getTam(tipo);
     }else{
         error("La variabe "+idVal+" ya fue declarada");
@@ -133,7 +136,7 @@ void Parser::l_(int tipo)
         string idVal = lexer->YYText();
         if(!TS.existe(idVal))
         {
-            TS.agregar(idVal, dir, tipo, "var");
+            TS.agregar(idVal, this->dir, tipo, "var");
             dir += TT.getTam(tipo);
         }else{
             error("La variabe "+idVal+" ya fue declarada");
@@ -181,43 +184,54 @@ void Parser::s(){
 
     if(token == TOK_ID){    
         if(TS.existe(idval)){
-            s_(TS.getTipo(idval),stoi(idval));            
+            s_(TS.getTipo(idval),TS.getDir(stoi(idval)));            
             eat(token);
         }else{
             error("La variable "+ idval +"no ha sido declarada");
         }
 
     }else if(token == TOK_IF){
-        string ltrue = driver->nuevaEtiqueta();
-        string lfalse = driver->nuevaEtiqueta();
-        Expresion E = e();
-        driver->gen_if(E.dir, ltrue);
-        driver->gen_goto(lfalse);
-        driver->gen_label(ltrue)
-        // S1.codigo
-        driver->gen_label(lfalse);
-        eat(token);
-
-    }else if(token == TOK_WHILE){
-        
-        string linicio = driver->nuevaEtiqueta();
-        string ltrue = driver->nuevaEtiqueta();
-        string lfalse = driver->nuevaEtiqueta();
-        eat(token);
-        s1();
-        eat(TOK_WHILE);
+        eat(TOK_IF);
         eat(TOK_LPAR);
+        string ltrue = nuevaEtiqueta();
+        string lfalse = nuevaEtiqueta();
         Expresion E = e();
         eat(TOK_RPAR);
 
-        driver->gen_label(linicio);
-        driver->gen_if(E.dir, ltrue);
-        driver->gen_goto(lfalse);
-        driver->gen_label(ltrue);
-        //S1.codigo
-        driver->gen_goto(linicio);
-        driver->gen_label(lfalse);
+        gen_if(E.dir, ltrue);
+        gen_goto(lfalse);
+        gen_label(ltrue);
+        s();
+        gen_label(lfalse);
+        eat(token);
+
+
+    }else if(token == TOK_ELSE){
+        string ltrue = nuevaEtiqueta();
+        string lfalse = nuevaEtiqueta();
+        string lfin = nuevaEtiqueta();
+        gen_goto(lfin);
+        gen_label(lfalse);
+        s();
+        gen_label(lfin);
+
+    }
+
+    }else if(token == TOK_WHILE){
         
+        string linicio = nuevaEtiqueta();
+        string ltrue = nuevaEtiqueta();
+        string lfalse = nuevaEtiqueta();
+        eat(TOK_WHILE);
+        eat(TOK_LCOR);
+        gen_label(linicio);
+        Expresion E =e();
+        gen_if(E.dir, ltrue);
+        gen_goto(lfalse);
+        eat(TOK_RPAR);
+        s();
+        gen_goto(linicio);
+        gen_label(lfalse);        
 
 
     }else if(token == TOK_DO){
@@ -421,3 +435,60 @@ void Parser::parse(){
         cout << "RECHAZADA" << endl;
     }
 }
+
+
+string Driver::nuevaEtiqueta(){
+    stringstream label;
+    label<< "L"<<etiqueta++;
+    return label.str();
+}
+
+string Parser::nuevaTemporal(){
+    stringstream label;
+    label<< "T"<<temp++;
+    return label.str();
+}
+
+string Parser::nuevoIndice(){
+    stringstream label;
+    label<< "I"<<index++;
+    return label.str();
+}
+
+void Parser::gen_label(string label){
+    code.push_back(Quadrupla("label", "","",label));
+}
+
+void Parser::gen_if(int dir, string label){
+    code.push_back(Quadrupla("if", dir, "goto", label));
+}
+
+void Parser::gen_goto(string label){
+    code.push_back(Quadrupla("goto", "", "", label));
+}
+
+void Parser::gen_fin(string label){
+    code.push_back(Quadrupla("fin", "", "", label));
+}
+
+int Parser::reducir(int dir, int t1, int t2){
+    
+    string temp;
+    if(t1==t2) return dir;
+    else if(t1==1 && t2==0){
+        temp = nuevaTemporal();
+        code.push_back(Quadrupla("(int)",dir, "", temp));
+        TS.agregar(Symbol(temp, 0, "temporal"));        
+        return temp;
+    }else return "";
+
+}
+
+int Parser::maximo(int t1, int t2)
+{
+    if(t1==t2) return t1;
+    else if(t1==0 && t2==1) return 1;
+    else if(t1==1 && t2==0) return 1;
+    else return -1;
+}
+

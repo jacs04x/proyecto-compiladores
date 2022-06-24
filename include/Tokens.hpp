@@ -7,6 +7,7 @@ enum TOKEN{
     TOK_MAS,
     TOK_MUL,
     TOK_IF,
+    TOK_ELSE,
     TOK_WHILE,
     TOK_DO,
     TOK_COMA,
