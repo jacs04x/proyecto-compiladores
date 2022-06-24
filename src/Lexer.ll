@@ -15,7 +15,6 @@ int line=1;
 
 %%
 "$"       {return TOK_FIN;}
-[a-zA-Z_]([a-zA-Z_0-9_])* {return TOK_ID;}
 "+"       { return TOK_MAS;}
 "*"       { return TOK_MUL;}
 "if"    { return(TOK_IF); }
@@ -31,6 +30,7 @@ int line=1;
 \(      { return TOK_LPAR;}
 \)      { return TOK_RPAR;}
 [0-9]+  { return TOK_NUM;}
+[a-zA-Z_]([a-zA-Z_0-9_])* {return TOK_ID;}
 "="       { return(TOK_ASIG); }
 "\n" 	{line++;}
 .    	{ cout << "ERROR LEXICO " << yytext << endl;}

@@ -33,7 +33,6 @@ private:
     int a(int base);
     void l(int tipo);
     void l_(int tipo);
-    void n();
     void n_();
     void s();
     void s_(int tipo, int dir);

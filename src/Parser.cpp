@@ -448,8 +448,6 @@ Expresion Parser::f(){
     }else{
              error("La variable no fue declarada");
     }
-
-
 }
 
 Expresion Parser::g_(Expresion h){
@@ -480,7 +478,6 @@ void Parser::eat(TOKEN t){
     }else{
           error("Se esperaba el token "+ to_string(t));
     }
-
 }
 
 void Parser::error(string msg){
