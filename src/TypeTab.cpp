@@ -10,7 +10,7 @@ TypeTab::TypeTab(){
 int TypeTab::agregar(Type tipo){
      int id = tableTT.size()+1; 
      tableTT[id] = tipo;
-     return tableTT[id].getTipoBase();
+     return id;
 }
 
 int TypeTab::getTam(int id){
@@ -18,18 +18,10 @@ int TypeTab::getTam(int id){
 }
 
 string TypeTab::getNombre(int tipo){
-     map<string, Type> :: iterator it = tableTT.find(tipo);
-     if (it != tableTT.end()){
-          return it.nombre;
-     }
+     return tableTT[tipo].getNombre();
 }
 
 int TypeTab::getTipoBase(int tipo){
-
-     map<string, Type> :: iterator it = tableTT.find(tipo);
-     if(it != tableTT.end()){
-          return tipo.tipo;
-     }
-
+     return tableTT[tipo].getTipoBase();
 }
 

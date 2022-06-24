@@ -11,8 +11,9 @@ private:
 public:
     TypeTab()=default;
     ~TypeTab() = default;
-    int agregar(int numval, int numtipo);
-    int getTam(int tipo);
+
+    int agregar(Type tipo);
+    int getTam(int id);
     string getNombre(int tipo);
     int getTipoBase(int tipo);
     int getTam(int tipo);

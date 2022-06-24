@@ -1,8 +1,7 @@
 #include "Parser.hpp"
 
-Parser::Parser(Lexer *lexer, Driver *driver){
+Parser::Parser(Lexer *lexer){
     this->lexer= lexer;
-    this->driver = driver;
     this->TT = TypeTab();
     this->TS = SymTab();
 }
@@ -95,7 +94,7 @@ int Parser::a(int base){
         {
             error("Se esperaba un tipo entero");
         }
-        Type t = Type("array", stoi(numval) * TT.getTam(numtipo), stoi(numval), A1tipo );
+        Type t = Type("array", stoi(numVal) * TT.getTam(numTipo), stoi(numVal), A1tipo );
         int Atipo = TT.agregar(t);
         return Atipo;
     }else{
@@ -180,11 +179,9 @@ void Parser::n_()
 void Parser::s(){
     
     string idval = lexer->YYText();
-    int s_dir = TS.getDir(idval);
-
     if(token == TOK_ID){    
         if(TS.existe(idval)){
-            s_(TS.getTipo(idval),TS.getDir(stoi(idval)));            
+            s_(TS.getTipo(idval),TS.getDir(idval));            
             eat(token);
         }else{
             error("La variable "+ idval +"no ha sido declarada");
@@ -215,19 +212,18 @@ void Parser::s(){
         s();
         gen_label(lfin);
 
-    }
-
     }else if(token == TOK_WHILE){
         
+        eat(TOK_WHILE);
+        eat(TOK_LPAR);
+        Expresion E =e();
         string linicio = nuevaEtiqueta();
         string ltrue = nuevaEtiqueta();
         string lfalse = nuevaEtiqueta();
-        eat(TOK_WHILE);
-        eat(TOK_LCOR);
         gen_label(linicio);
-        Expresion E =e();
         gen_if(E.dir, ltrue);
         gen_goto(lfalse);
+        gen_label(ltrue);
         eat(TOK_RPAR);
         s();
         gen_goto(linicio);
@@ -235,14 +231,18 @@ void Parser::s(){
 
 
     }else if(token == TOK_DO){
-        string ltrue = driver->nuevaEtiqueta();
-        string lfalse = driver->nuevaEtiqueta();
+        eat(TOK_DO);
+        string ltrue = nuevaEtiqueta();
+        string lfalse = nuevaEtiqueta();
+        gen_label(ltrue);
+        s();
+        eat(TOK_WHILE);
+        eat(TOK_RPAR);
         Expresion E = e();
-        driver->gen_label(ltrue);
-        //S1.codigo
-        driver->gen_if(E.dir, ltrue);
-        driver->gen_label(lfalse);
-        eat(token);
+        gen_if(E.dir, ltrue);
+        gen_label(lfalse);
+        eat(TOK_RPAR);
+        eat(TOK_PYC);
     }
 
 }
@@ -255,114 +255,129 @@ void Parser::s(){
  */
 
 void Parser::s_(int tipo, int dir){
-    y(tipo, dir);
+    map<string, int> mapS_ = y(tipo, dir);
+    if(token == TOK_LCOR){
+    eat(TOK_LCOR);
+    eat(TOK_RCOR);
+
     eat(TOK_ASIG);
     Expresion E = e();
-    if (tipo == E.tipo){
-        string op1 = driver->reducir(E.dir, E.tipo, tipo);
+    
+    if (mapS_["tipo"] == E.tipo){
+        int op1 = reducir(stoi(E.dir), E.tipo, mapS_["tipo"]);
         string yID= lexer->YYText();
-        string toGen += yID;
-               toGen += "[";
-               toGen += dir ;
-               toGen += "]";
-               toGen += "=";
-               toGen += op1;
-
+        genCode(Quadrupla(yID, "["+to_string(mapS_["dir"])+"]", "=", to_string(op1)));
     }else{
         error("Incopatibilidad de tipos");
     }
-    eat(TOK_PYC);
     
-
-
+    eat(TOK_PYC);
+    } else if(token == TOK_ASIG){
+        eat(TOK_ASIG);
+        Expresion E = e();
+        if(E.tipo == tipo){
+            int dirn = reducir(stoi(E.dir), E.tipo, mapS_["tipo"]);
+            genCode(Quadrupla("=",to_string(dir), " ", dirn));
+        }
+        eat(TOK_PYC);
+    }
 }
 
-void Parser::y(int tipo, int dir){
-    int Ytipo;
-    int Ytam;
-    int Ydir;
-    if (token ==  TOK_ID){
+
+map<string, int> Parser::y(int tipo, int dir){
+
+    map<string, int> mapY;
+    if (token == TOK_ID){
         string idval= lexer->YYText();
-        eat(token);
+        eat(TOK_ID);
         eat(TOK_LCOR);
         Expresion E = e();
         if(TS.existe(idval)){
             int tipo = TS.getTipo(idval);
             if(TT.getNombre(tipo) == "array"){
-                Ytipo = TT.getTipoBase(tipo);
-                Ytam = TT.getTam(Ytipo);
-                Ydir = driver->nuevaTemporal()
+                this->temp++;
+                mapY["Ytipo"] = TT.getTipoBase(tipo);
+                mapY["Ytam"] = TT.getTam(tipo);
+                mapY["Ydir"] = temp;
                 if(E.tipo != 0){
                     error("El indice para un arreglo debe ser entero");
                 }
-                //genCod( Y.dir ‘=’ E.dir ‘*’ Y.tam)
-                string id = idaval;
+                genCode("=",mapY["Ydir"], " ", E.dir+ " * " +to_string(mapY["Ytam"]));
+                mapY["Yid"] = stoi(idval);
             }
         }
         eat(TOK_RCOR);
     }else if (token == TOK_LCOR){
-        int y_tipo;
-        int y_tam;
-        int y_dir;
-        eat(token);
-        Expresion E = e();
+        eat(TOK_LCOR);
         if( TT.getNombre(tipo) == "array"){
-            y_tipo = TT.getTipoBase(tipo) ;
-            y_tam = TT.getTam(Ytipo)
-            y_dir = driver->nuevaTemporal();
+            Expresion E = e();
+            eat(TOK_RCOR);
+            this->temp++;
+            map<string, int> mapY_ = y_(this->temp, TT.getTipoBase(tipo), TT.getTam(tipo));
+            mapY_["y_tipoH"] = TT.getTipoBase(tipo);
+            mapY_["y_tamH"] = TT.getTam(tipo);
+            mapY_["y_dirH"] = this->temp;
             if(E.tipo != 0){
                 error("El indice para un arreglo debe ser entero");
             }
             //genCod( Y_I.dirH ‘=’ E.dir ‘*’ Y_I.tamH)
+            genCode("=", "T "+ to_string(mapY_["y_dirH"]),"",  to_string(mapY_["y_tamH"]));
+
             /*
                 Y.dir = Y_I.dirS
                 Y.tipo = Y_I.tipoS
                 Y.tam = Y_I.tamS
             */            
-            Ydir = y_dir;
-            Ytipo = y_tipo;
-            Ytam = y_tam;
-            y_(Ydir, Ytipo, Ytam);
-            eat(TOK_RCOR);
+            mapY["Ydir"] = mapY_["y_dirH"];
+            mapY["Ytam"] = mapY_["y_tamH"];
+            mapY["Ytipo"] = mapY_["y_tipoH"];
         }
     }
-    
+    return mapY;
 }
 
-void Parser::y_(int dir, int tipo, int tam){
-    int y_1tipoH ;
-    int y_1tamH;
-    int y_1dir;
-    int y_dirS;
-    int y_tamS;
-    int y_tipoS;
-    int t;
+map<string, int> Parser::y_(int dir, int tipo, int tam){
+
+    map<string, int> mapY_ ;
     if(token == TOK_LCOR){
         eat(TOK_LCOR);
         Expresion E = e();
+        eat(TOK_RCOR);
+
         if(TT.getNombre(tipo) == "array"){
-            y_1tipoH = TT.getTipoBase(tipo);
-            y_1tamH = TT.getTam(tipo);
-            t = driver->nuevaTemporal();
-            y_1dir = driver ->nuevaTemporal();
+            map<string, int> mapY_1 = y_(this->temp, TT.getTipoBase(tipo), TT.getTam(Ytipo));
+            this->temp++;
+            mapY_1["y1_tipoH"] = TT.getTipoBase(tipo);
+            mapY_1["y1_tamH"] = TT.getTam(tipo);
+            string t = nuevaTemporal();
+            mapY_1["y1_dirH"] = this->temp++;
             if (E.tipo != 0){
                 error("El indice para un arreglo debe ser entero");
             }
-            //genCod( t ‘=’ E.dir ‘*’ Y_I1.tamH)
-            //genCod( Y_I1.dirH ‘=’ Y_I.dirH ‘+’ t )
+            genCode("=", t, " ", E.dir + "*" + to_string(mapY_["y1_tamH"]));
+            genCode("=", to_string(this->temp), " ", "T" + to_string(mapY_["t1_dirH"]) + "+" + t);
             /*
             Y_I.dirS = Y_I1.dirS
             Y_I.tamS = Y_I1.tamS
             Y_I.tipoS = Y_I1.tipoS
             */
+           mapY_["Y_dirS"] = mapY_1["y1_dirH"];
+           mapY_["Y_tamS"] = mapY_1["y1_tamH"];
+           mapY_["Y_tipoS"] = mapY_1["y1_tipoH"];
+
+
         }
-    }
+    }else{
     /*
     Y_I.dirS = Y_I.dirH
     Y_I.tamS = Y_I.tamH
     Y_I.tipoS = Y_I.tipoH
     */
-
+    mapY_["Y_dirS"] = dir;
+    mapY_["Y_tamS"] = tam;
+    mapY_["Y_tipoS"] = tipo;
+        
+    }
 }
 
 
@@ -379,7 +394,20 @@ Expresion Parser::e_(Expresion h){
         eat(TOK_MAS);
         Expresion G = g(); 
         Expresion E_1h;
+        if(E_1h.tipo == G.tipo){
+            string E_1dirH = nuevaTemporal();
+            int E_1tipoH = maximo(E_1h.tipo, G.tipo);
+            string op1 = ampliar(E_1h.dir, E_1h.tipo, E_1tipoH);
+            string op2 = ampliar(G.dir, G.tipo, h.tipo );
+            genCode("=", E_1dirH, " ", op1 + " + "+op2 );
+        }
+    }else {
+        /*
+        E_I.dirS = E_I.dirH
+        E_I.tipoS = E_I.tipoH
+         */ 
     }
+    return h;
 }
 
 Expresion Parser::g(){
@@ -393,11 +421,32 @@ Expresion Parser::f(){
     if(token == TOK_LPAR){
         eat(TOK_LPAR);
         F = e();
+        eat(TOK_RPAR);
         return F;
     }else if (token == TOK_ID){
-        eat(token);
+        eat(TOK_ID);
+        string id = lexer->YYText();
+        if(TS.existe(id)){
+            F.dir = id;
+            F.tipo= TS.getTipo(id);
+        }
+        if(token == TOK_LCOR){
+            if(TS.existe(id)){
+                map<string, int> mapY = y(TS.getTipo(id),stoi(id));
+                F.dir = nuevaTemporal();
+                F.tipo = mapY["tipo"];  
+                genCode("=", F.dir, " ", to_string(mapY["Yid"]) + "[" + to_string(mapY["Ydir"])+"]" );
+            }else{
+                error("La variable no fue declarada");
+
+            }
+        }
     }else if(token == TOK_NUM){
-        eat(token);
+        eat(TOK_NUM);
+        F.tipo = lexer->getTipo();
+        F.dir =  lexer->YYText();
+    }else{
+             error("La variable no fue declarada");
     }
 
 
@@ -406,17 +455,30 @@ Expresion Parser::f(){
 Expresion Parser::g_(Expresion h){
     string op 1, op2 ;
     if(token == TOK_MUL){
-        eat(token);
+        eat(TOK_MUL);
         Expresion F = f();
         Expresion G_1h;
+    if(G_1h.tipo == F.tipo){
+            string G_1dirH = nuevaTemporal();
+            int G_1tipoH = maximo(G.tipo, F.tipo);
+            string op1 = ampliar(G.dir, G.tipo, G_1tipoH);
+            string op2 = ampliar(F.dir, F.tipo, h.tipo );
+            genCode("=", G_1dirH, " ", op1 + " * "+op2 );
+        }
+    }else {
+        /*
+        G_I.dirS = G_I.dirH
+        G_I.tipoS = G_I.tipoH
+        */
+    }
     }
 }
 
-void Parser::eat(Token t){
+void Parser::eat(TOKEN t){
     if(t == token){
-        token = lexer->yylex();    
+        token = (TOKEN)lexer->yylex();    
     }else{
-          error("Se esperaba el token "+ lexer->TOKEN[token]);
+          error("Se esperaba el token "+ to_string(t));
     }
 
 }
@@ -437,7 +499,7 @@ void Parser::parse(){
 }
 
 
-string Driver::nuevaEtiqueta(){
+string Parser::nuevaEtiqueta(){
     stringstream label;
     label<< "L"<<etiqueta++;
     return label.str();
@@ -449,11 +511,7 @@ string Parser::nuevaTemporal(){
     return label.str();
 }
 
-string Parser::nuevoIndice(){
-    stringstream label;
-    label<< "I"<<index++;
-    return label.str();
-}
+
 
 void Parser::gen_label(string label){
     code.push_back(Quadrupla("label", "","",label));
@@ -471,16 +529,21 @@ void Parser::gen_fin(string label){
     code.push_back(Quadrupla("fin", "", "", label));
 }
 
+void Parser::genCode(Quadrupla q){
+    code.push_back(q);
+}
+
 int Parser::reducir(int dir, int t1, int t2){
     
-    string temp;
     if(t1==t2) return dir;
     else if(t1==1 && t2==0){
-        temp = nuevaTemporal();
-        code.push_back(Quadrupla("(int)",dir, "", temp));
-        TS.agregar(Symbol(temp, 0, "temporal"));        
-        return temp;
-    }else return "";
+        this->temp++;
+        genCode(Quadrupla("int",dir, " ", this->temp));
+        TS.agregar(Symbol( "temporal", temp, 0));        
+        return this->temp;
+    }else {
+        return -1;
+    }
 
 }
 
@@ -490,5 +553,21 @@ int Parser::maximo(int t1, int t2)
     else if(t1==0 && t2==1) return 1;
     else if(t1==1 && t2==0) return 1;
     else return -1;
+}
+
+string Parser::ampliar(string dir, int t1, int t2)
+{
+    string temp;
+    if(t1==t2) return dir;
+    else if(t1==0 && t2==1){
+        temp = nuevaTemporal();
+        code.push_back(Quadrupla("(float)",dir, "", temp));
+        TS.agregar(Symbol("temporal",this->temp, 1 ));
+        return temp;
+    }else return "";
+}
+
+void Parser::codigointermedio(){
+
 }
 

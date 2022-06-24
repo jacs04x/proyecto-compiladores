@@ -1,6 +1,8 @@
 #ifndef __TYPE_HPP__
 #define __TYPE_HPP__
 
+#include <string>
+using namespace std;
 
 class Type{
 
@@ -11,8 +13,6 @@ private:
     int tipoBase;
 
 public:
-    Type(string nombre, int tamano, int numElementos, int tipoBase);
-    
     Type(int val, int tipo);
     Type(string nombre, int tamano, int numElementos, int tipoBase);
     string getNombre();

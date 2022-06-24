@@ -1,13 +1,18 @@
 #ifndef __QUADRUPLA_HPP__
 #define __QUADRUPLA_HPP__
 
-class Quadrupla{
+#include <string>
+using namespace std;
+
+class Quadrupla
+{
 
 private:
-        string op;
-        string arg1;
-        string arg2;
-        string res;
+    string op;
+    string arg1;
+    string arg2;
+    string res;
+    
 public:        
     Quadrupla(string op, string arg1, string arg2, string res);
     string getOp();
@@ -16,6 +21,6 @@ public:
     string getRes();
 
 
-
+};
 
 #endif // !__QUADRUPLA_HPP__
