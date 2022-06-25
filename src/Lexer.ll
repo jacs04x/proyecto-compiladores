@@ -12,6 +12,7 @@ int line=1;
 %option c++
 %option outfile="Lexer.cpp"
 %option yyclass="Lexer"
+%option case-insensitive
 
 %%
 "*"       { return TOK_MUL;}
@@ -41,4 +42,8 @@ int yyFlexLexer::yywrap(){
 int Lexer::getLine()
 {
     return line;
+}
+
+int Lexer::getTipo(){
+    return numType;
 }

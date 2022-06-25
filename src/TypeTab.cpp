@@ -1,7 +1,9 @@
 #include "TypeTab.hpp"
 #include "Tipo.hpp"
 
-
+TypeTab::~TypeTab(){
+     
+}
 
 TypeTab::TypeTab(){
      this->tableTT = map<int, Tipo>();
