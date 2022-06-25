@@ -7,9 +7,10 @@
 
 ### Uso
 
-- Posicionarse en la carpeta principal y ejecutar el comando 
+Al clonar el repositorio 
 
 ```markdown
+$ cd proyecto-compiladores
 $ make
 ```
 
