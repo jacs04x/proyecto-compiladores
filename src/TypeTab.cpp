@@ -30,3 +30,18 @@ int TypeTab::getTipoBase(int tipo){
      return tableTT[tipo].getTipoBase();
 }
 
+int TypeTab::getTamanoTabla(){
+     return tableTT.size();
+}
+
+void TypeTab::getTabla(){
+
+     cout << "Tabla de Tipos" << endl; 
+
+     for (int i = 0; i < getTamanoTabla(); i++)
+     {
+          tableTT[i].imprime();
+     }
+     
+}
+

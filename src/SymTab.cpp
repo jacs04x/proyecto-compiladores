@@ -43,3 +43,24 @@ bool SymTab::existe(string id)
     map<string,Symbol>::iterator it = table.find(id);
     return it != table.end();
 }
+
+int SymTab::getTamanoTabla(){
+    return table.size();
+}
+
+void SymTab::getTabla(){
+
+    cout << "Tabla de Simbolos" << endl; 
+    vector<Symbol> simbolos;
+    
+    for(const auto &tabla : table){
+        Symbol s = tabla.second;
+        s.imprime();
+    }
+/*
+    for(int j = 0; j < s; j++){
+        simbolos[i].imprime() ;
+    }
+*/
+
+}

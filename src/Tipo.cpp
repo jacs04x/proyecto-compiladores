@@ -26,4 +26,10 @@ int Tipo::getTipoBase(){
     return tipoBase;
 }
 
+void Tipo::imprime(){
+
+cout << getNombre() +" "+to_string(getTamano()) +" "+ to_string(getNumElementos()) +" "+ to_string(getTipoBase()) <<endl;
+
+}
+
 

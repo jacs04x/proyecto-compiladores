@@ -2,11 +2,14 @@
 #define __SYM_TAB_HPP__
 
 #include <map>
+#include <stack>
+#include <list>
 #include "Symbol.hpp"
 
 class SymTab{
 private:
     map<string, Symbol> table;
+    stack<list<Symbol>> pila;
 public:
     SymTab();
     ~SymTab();
@@ -17,6 +20,8 @@ public:
     void agregar(string id, int dir, int tipo, string cat);
     void agregar(string id, int dir, int tipo, string cat, vector<int> args);
     bool existe(string id);
+    int getTamanoTabla();
+    void getTabla();
 };
 
 #endif // !__SYM_TAB_HPP__

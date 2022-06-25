@@ -35,3 +35,19 @@ vector<int> Symbol::getArgs()
 {
     return args;
 }
+
+int Symbol::getTamArgs(){
+    return args.size();
+}
+
+void Symbol::imprime(){
+    string a;
+    for (int i = 0; i < getTamArgs(); i++)
+    {
+        a = a + " " + to_string(this->args[i])+" ";
+
+    }
+
+    cout << to_string(getDir()) + " "+ to_string(getTipo()) + " " + getCat() +""+ a<<endl; 
+
+}

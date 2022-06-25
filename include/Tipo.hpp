@@ -2,6 +2,7 @@
 #define __TIPO_HPP__
 
 #include <string>
+#include "iostream"
 using namespace std;
 
 class Tipo{
@@ -19,7 +20,7 @@ public:
     int getTamano();
     int getNumElementos();
     int getTipoBase();
-
+    void imprime();
     
 };
 

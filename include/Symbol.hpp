@@ -3,8 +3,9 @@
 
 #include <string>
 #include <vector>
-
+#include "iostream"
 using namespace std;
+
 
 class Symbol
 {
@@ -23,6 +24,9 @@ public:
     int getTipo();
     int getDir();
     vector<int> getArgs();
+    int getTamArgs();
+    void imprime();
+
 };
 
 #endif // !__SYMBOL_HPP__

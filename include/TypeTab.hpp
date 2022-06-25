@@ -4,6 +4,10 @@
 #include <map>
 #include "Symbol.hpp"
 #include "Tipo.hpp"
+#include "iostream"
+#include <sstream>
+#include <string>
+using namespace std;
 
 class TypeTab{
 private:
@@ -16,7 +20,9 @@ public:
     int getTam(int id);
     string getNombre(int tipo);
     int getTipoBase(int tipo);
-    
+    int getTamanoTabla();
+    void getTabla();
+
 
 
 };

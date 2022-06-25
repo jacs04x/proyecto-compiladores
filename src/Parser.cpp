@@ -16,6 +16,7 @@ Parser::~Parser()
 
 void Parser::p()
 {
+    cout << "p" << endl;
     d();
     n();
 }
@@ -28,6 +29,7 @@ void Parser::p()
 
 void Parser::d()
 {
+    cout << "d" << endl;
     if(token == TOK_INT || token == TOK_FLOAT)
     {
         int Ttipo = t();
@@ -48,6 +50,7 @@ void Parser::d()
 
 int Parser::t()
 {
+    cout << "t" << endl;
     int Bbase = b();
     int Ttipo = a(Bbase);
     return Ttipo;
@@ -63,7 +66,9 @@ int Parser::t()
 
 int Parser::b()
 {
+    cout << "b"+ to_string(token) << endl;
     int base;
+    
     if(token == TOK_INT)
     {
         eat(TOK_INT);
@@ -86,6 +91,7 @@ int Parser::b()
  */
 
 int Parser::a(int base){
+    cout << "a" << endl;
     int numTipo;
     string numVal;
     if(token == TOK_LCOR)
@@ -116,6 +122,7 @@ int Parser::a(int base){
 
 void Parser::l(int tipo)
 {
+    cout << "l" << endl;
     string idVal = lexer->YYText();
     if(!TS.existe(idVal))
     {
@@ -136,6 +143,7 @@ void Parser::l(int tipo)
 
 void Parser::l_(int tipo)
 {
+    cout << "l_" << endl;
     if(token == TOK_COMA){
         eat(TOK_COMA);
         string idVal = lexer->YYText();
@@ -158,6 +166,7 @@ void Parser::l_(int tipo)
  */
 
 void Parser::n(){
+    cout << "n" << endl;
     s();
     n_();
 }
@@ -169,6 +178,7 @@ void Parser::n(){
 
 void Parser::n_()
 {
+    cout << "n_" << endl;
     if(token == TOK_ID || token == TOK_IF || token == TOK_WHILE || token == TOK_DO){
         s();
         n_();
@@ -183,7 +193,7 @@ void Parser::n_()
  */
 
 void Parser::s(){
-    
+    cout << "s" << endl;
     string idval = lexer->YYText();
     if(token == TOK_ID){    
         if(TS.existe(idval)){
@@ -497,6 +507,7 @@ void Parser::error(string msg){
 void Parser::parse(){
     token = (TOKEN)lexer->yylex();
     p();
+    codigointermedio();
     if (token == TOK_FIN){
         cout << "ACEPTADA" << endl;
     }else {
@@ -578,24 +589,11 @@ string Parser::imprime(Quadrupla q){
 
 void Parser::codigointermedio(){
 
-    ofstream archivo;
-    string nombre = "salida.cod";
-    string aux = "";
-    archivo.open(nombre);
-
-    unsigned int codeSize = this->code.size();
-
-    for (unsigned int i = 0; i < codeSize; i++)
-    {
-        aux += imprime(this->code[i]) + "|";
-        archivo << aux ;
-        aux = aux + "\n";
-        
-    }
-    archivo << endl;
-
-    archivo.close();
-    }
+    cout << "codigo "+to_string(this->code.size())+"\n" <<endl;
+    TT.getTabla();
+    TS.getTabla();
+    
+}
 
     
 
