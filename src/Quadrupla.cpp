@@ -22,3 +22,4 @@ string Quadrupla::getArg2(){
 string Quadrupla::getRes(){
     return res;
 }
+

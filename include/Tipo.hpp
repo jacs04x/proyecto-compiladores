@@ -13,7 +13,7 @@ private:
     int tipoBase;
 
 public:
-    
+    Tipo()=default;
     Tipo(string nombre, int tamano, int numElementos, int tipoBase);
     string getNombre();
     int getTamano();

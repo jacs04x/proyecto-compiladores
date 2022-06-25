@@ -9,11 +9,14 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <fstream> 
+
 using namespace std;
 
 class Parser
 {
 private:
+    
     Lexer *lexer;
     TOKEN token;
     SymTab TS;
@@ -22,7 +25,6 @@ private:
     vector<Quadrupla> code;
     int etiqueta=0;
     int temp= 0;
-    
     
 private:
     
@@ -47,7 +49,6 @@ private:
     Expresion f();
     Expresion g_(Expresion h);
     void codigointermedio();
-
     string reducir(string dir, int t1, int t2);
     void gen_if(string dir, string label);
     void gen_goto(string label);        
@@ -59,10 +60,12 @@ private:
     string ampliar(string dir, int t1, int t2);
     void genCode(Quadrupla q);
     void eat(TOKEN t);
-    void parse();
+    string imprime(Quadrupla q);
 public:
-    ~Parser() = default;
+    void parse();
     Parser(Lexer *lexer);
+    ~Parser();
+    
     
 };
 

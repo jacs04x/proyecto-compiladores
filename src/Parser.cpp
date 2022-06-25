@@ -1,9 +1,12 @@
 #include "Parser.hpp"
 
 Parser::Parser(Lexer *lexer){
-    this->lexer= lexer;
-    this->TT = TypeTab();
-    this->TS = SymTab();
+    this->lexer=lexer;
+}
+
+Parser::~Parser()
+{
+    
 }
 
 /**
@@ -288,6 +291,7 @@ void Parser::s_(int tipo, int dir){
 
 
 map<string, int> Parser::y(int tipo, int dir){
+    dir++;
     map<string, int> mapY;
     if (token == TOK_ID){
         string idval= lexer->YYText();
@@ -568,7 +572,32 @@ string Parser::ampliar(string dir, int t1, int t2)
     }else return "";
 }
 
+string Parser::imprime(Quadrupla q){
+    return q.getOp() + " " + q.getArg1() + " " + q.getArg2() + " " + q.getRes();
+}
+
 void Parser::codigointermedio(){
 
-}
+    ofstream archivo;
+    string nombre = "salida.cod";
+    string aux = "";
+    archivo.open(nombre);
+
+    unsigned int codeSize = this->code.size();
+
+    for (unsigned int i = 0; i < codeSize; i++)
+    {
+        aux += imprime(this->code[i]) + "|";
+        archivo << aux ;
+        aux = aux + "\n";
+        
+    }
+    archivo << endl;
+
+    archivo.close();
+    }
+
+    
+
+
 

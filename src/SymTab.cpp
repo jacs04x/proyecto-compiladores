@@ -1,5 +1,12 @@
 #include "SymTab.hpp"
 
+SymTab::SymTab(){
+
+}
+
+SymTab::~SymTab(){
+
+}
 
 int SymTab::getDir(string id)
 {

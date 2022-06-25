@@ -8,7 +8,8 @@ class SymTab{
 private:
     map<string, Symbol> table;
 public:
-    SymTab()=default;
+    SymTab();
+    ~SymTab();
     int getDir(string id);
     int getTipo(string id);
     string getCat(string id);

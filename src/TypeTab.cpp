@@ -4,6 +4,7 @@
 
 
 TypeTab::TypeTab(){
+     this->tableTT = map<int, Tipo>();
      this->tableTT[0] = Tipo("int",4, -1, 0 );
      this->tableTT[1] = Tipo("float", 4, -1,1);
 }

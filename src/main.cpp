@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "include/Lexer.hpp"
-#include "include/Parser.hpp"
+#include "Lexer.hpp"
+#include "Parser.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     fb.open(string(argv[1]), ios::in);
     istream in(&fb);
     Lexer lexer(&in);
-    ParserLL parser(&lexer);
+    Parser parser(&lexer);
     parser.parse();
     fb.close();
     return 0;

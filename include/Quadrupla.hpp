@@ -19,8 +19,9 @@ public:
     string getArg1();
     string getArg2();
     string getRes();
-
-
+    
 };
+
+
 
 #endif // !__QUADRUPLA_HPP__
