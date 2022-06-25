@@ -1,6 +1,7 @@
 int a;
 float b;
 int c;
-int [7] d;
+int [7] d ;
+
 while(a+b)
 
