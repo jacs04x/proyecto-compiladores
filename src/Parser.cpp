@@ -501,11 +501,14 @@ void Parser::eat(TOKEN t){
 
 void Parser::error(string msg){
     cout << "ERROR: " << msg <<endl;
+    exit(EXIT_FAILURE);
+
 }   
 
 
 void Parser::parse(){
     token = (TOKEN)lexer->yylex();
+    cout << "primer token: "+ to_string((TOKEN)token) <<endl;
     p();
     codigointermedio();
     if (token == TOK_FIN){
@@ -588,10 +591,18 @@ string Parser::imprime(Quadrupla q){
 }
 
 void Parser::codigointermedio(){
-
-    cout << "codigo "+to_string(this->code.size())+"\n" <<endl;
+    cout << "\n" << endl;
+    cout << "=======================" << endl;
     TT.getTabla();
+        cout << "\n" << endl;
+    cout << "=======================" << endl;
     TS.getTabla();
+    int s = this->code.size();
+    cout << "\n" << endl;
+    cout << "=======================" << endl;
+    for(int i =0 ; i<s; i++){
+        cout<< imprime(this->code[i]) <<endl;
+    }
     
 }
 
