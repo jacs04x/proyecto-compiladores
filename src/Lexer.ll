@@ -3,8 +3,8 @@
 #include <string>
 using namespace std;
 
-#include "include/Tokens.hpp"
-#include "headers/Lexer.hpp"
+#include "Lexer.hpp"
+#include "Tokens.hpp"
 
 int line=1;
 %}
@@ -14,10 +14,10 @@ int line=1;
 %option yyclass="Lexer"
 
 %%
+"*"       { return TOK_MUL;}
 "$"       {return TOK_FIN;}
 "+"       { return TOK_MAS;}
-"*"       { return TOK_MUL;}
-"if"    { return(TOK_IF); }
+"if"    { return(TOK_IF);}
 "else"  { return(TOK_ELSE);}
 "while" { return TOK_WHILE;}
 "do"    { return TOK_DO;}

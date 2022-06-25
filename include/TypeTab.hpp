@@ -3,20 +3,19 @@
 
 #include <map>
 #include "Symbol.hpp"
-#include "Type.hpp"
+#include "Tipo.hpp"
 
 class TypeTab{
 private:
-    map<int, Type> tableTT;
+    map<int, Tipo> tableTT;
 public:
-    TypeTab()=default;
-    ~TypeTab() = default;
+    TypeTab();
+    ~TypeTab();
 
-    int agregar(Type tipo);
+    int agregar(Tipo tipo);
     int getTam(int id);
     string getNombre(int tipo);
     int getTipoBase(int tipo);
-    int getTam(int tipo);
     
 
 

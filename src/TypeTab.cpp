@@ -1,13 +1,15 @@
-#include "include/TypeTab.hpp"
-#include "Type.hpp"
+#include "TypeTab.hpp"
+#include "Tipo.hpp"
+
+
 
 TypeTab::TypeTab(){
-     tableTT[0] = Type("int",4, -1, 0 );
-     tableTT[1] = Type("float", 4, -1,1);
+     this->tableTT[0] = Tipo("int",4, -1, 0 );
+     this->tableTT[1] = Tipo("float", 4, -1,1);
 }
 
 
-int TypeTab::agregar(Type tipo){
+int TypeTab::agregar(Tipo tipo){
      int id = tableTT.size()+1; 
      tableTT[id] = tipo;
      return id;

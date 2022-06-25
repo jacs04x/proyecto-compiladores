@@ -329,7 +329,7 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[41] =
     {   0,
-        0,    0,   22,   20,   19,    1,   14,   15,    3,    2,
+        0,    0,   22,   20,   19,    2,   14,   15,    1,    3,
         8,   16,    9,   18,   17,   12,   13,   17,   17,   17,
        17,   17,   16,   17,    7,   17,   17,    4,   17,   17,
        17,   17,   10,   17,    5,   17,   17,   11,    6,    0
@@ -429,8 +429,8 @@ static const flex_int16_t yy_chk[73] =
 #include <string>
 using namespace std;
 
-#include "include/Tokens.hpp"
-#include "headers/Lexer.hpp"
+#include "Lexer.hpp"
+#include "Tokens.hpp"
 
 int line=1;
 #line 437 "Lexer.cpp"
@@ -628,22 +628,22 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 17 "Lexer.ll"
-{return TOK_FIN;}
+{ return TOK_MUL;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 18 "Lexer.ll"
-{ return TOK_MAS;}
+{return TOK_FIN;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 19 "Lexer.ll"
-{ return TOK_MUL;}
+{ return TOK_MAS;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 20 "Lexer.ll"
-{ return(TOK_IF); }
+{ return(TOK_IF);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP

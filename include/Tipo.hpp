@@ -1,10 +1,10 @@
-#ifndef __TYPE_HPP__
-#define __TYPE_HPP__
+#ifndef __TIPO_HPP__
+#define __TIPO_HPP__
 
 #include <string>
 using namespace std;
 
-class Type{
+class Tipo{
 
 private: 
     string nombre;
@@ -13,8 +13,8 @@ private:
     int tipoBase;
 
 public:
-    Type(int val, int tipo);
-    Type(string nombre, int tamano, int numElementos, int tipoBase);
+    
+    Tipo(string nombre, int tamano, int numElementos, int tipoBase);
     string getNombre();
     int getTamano();
     int getNumElementos();
@@ -25,4 +25,4 @@ public:
 
 
 
-#endif // !__TYPE_HPP__
+#endif // !__TIPO_HPP__

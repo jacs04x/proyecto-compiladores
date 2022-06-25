@@ -8,6 +8,8 @@
 #include "Quadrupla.hpp"
 #include <map>
 #include <sstream>
+#include <string>
+using namespace std;
 
 class Parser
 {
@@ -27,18 +29,18 @@ private:
     void error(string msg);
     void p();
     void d();
-    void n();
     int t();
     int b();
     int a(int base);
     void l(int tipo);
     void l_(int tipo);
+    void n();
     void n_();
     void s();
     void s_(int tipo, int dir);
     map<string, int> y(int tipo, int dir);
     void s1();
-    void y_(int dir, int tipo, int tam);
+    map<string, int> y_(int dir, int tipo, int tam);
     Expresion e();
     Expresion e_(Expresion h);    
     Expresion g();
@@ -46,9 +48,9 @@ private:
     Expresion g_(Expresion h);
     void codigointermedio();
 
-    int reducir(int dir, int t1, int t2);
-    void gen_if(string dir, string etiqueta);
-    void gen_goto(string etiqueta);        
+    string reducir(string dir, int t1, int t2);
+    void gen_if(string dir, string label);
+    void gen_goto(string label);        
     void gen_label(string label);
     void gen_fin(string label);
     string nuevaTemporal();
@@ -56,8 +58,8 @@ private:
     int maximo(int t1, int t2);
     string ampliar(string dir, int t1, int t2);
     void genCode(Quadrupla q);
-
     void eat(TOKEN t);
+    void parse();
 public:
     ~Parser() = default;
     Parser(Lexer *lexer);

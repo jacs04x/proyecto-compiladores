@@ -21,13 +21,13 @@ vector<int> SymTab::getArgs(string id)
     return table[id].getArgs();
 }
 
-void SymTab::agregar(string id, int dir, int tipo, string cat)
-{    
+
+void SymTab::agregar(string id, int dir, int tipo, string cat){
     table[id] = Symbol(dir, tipo, cat);
 }
 
 void SymTab::agregar(string id, int dir, int tipo, string cat, vector<int> args)
-{
+{   
     table[id] = Symbol(dir, tipo, cat, args);
 }
 
